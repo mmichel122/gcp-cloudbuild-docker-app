@@ -1,7 +1,9 @@
 steps:
     # Build the container image
     - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'gcr.io/$PROJECT_ID/cost-app:$SHORT_SHA', '.']
+      args: ['build', '-t', 'gcr.io/$PROJECT_ID/cost-app:$TAG_NAME', '.']
     # Push the image to Container Registry
     - name: 'gcr.io/cloud-builders/docker'
-      args: ['push', 'gcr.io/$PROJECT_ID/cost-app:$SHORT_SHA']
+      args: ['push', 'gcr.io/$PROJECT_ID/cost-app:$TAG_NAME']
+    images:
+    - gcr.io/$PROJECT_ID/cost-app:$TAG_NAME
