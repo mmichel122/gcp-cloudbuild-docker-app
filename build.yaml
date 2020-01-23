@@ -1,13 +1,17 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build',
-           '--build-arg',
-           'img_version=${_IMG_VERSION_1}',
-           '-t',
-           'gcr.io/$PROJECT_ID/cost-app-${_IMG_VERSION_1}',
-           '.']
-  substitutions:
-      _IMG_VERSION_1: v1 # default value
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/cost-app-${_IMG_VERSION_1}']
-  images: ['gcr.io/$PROJECT_ID/cost-app-${_IMG_VERSION_1}']
+    # Build the container image
+    - id: &PublishImages Publish Images
+      name: gcr.io/cloud-builders/docker
+      waitFor:
+      - '-'
+      entrypoint: bash
+      args:
+      - -ceux
+      - |
+        docker build -t gcr.io/PROJECT_ID/dev:$COMMIT_SHA
+        docker tag gcr.io/PROJECT_ID/dev:$COMMIT_SHA gcr.io/$PROJECT_ID/dev:latest
+    # Push the image to Container Registry
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/$PROJECT_ID/dev:latest']
+    images:
+    - ggcr.io/$PROJECT_ID/dev:latest
